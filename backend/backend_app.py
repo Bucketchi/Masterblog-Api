@@ -11,8 +11,8 @@ POSTS = [
 
 
 def find_post_by_id(post_id):
-    """ Find the book with the id `book_id`.
-    If there is no book with this id, return None. """
+    """ Find the post with the id `post_id`.
+    If there is no post with this id, return None. """
     for post in POSTS:
         if post['id'] == post_id:
             return post
@@ -20,6 +20,7 @@ def find_post_by_id(post_id):
 
 
 def validate_post_data(data):
+    """Validate the input for the new post"""
     missing_fields = []
     if "title" not in data:
         missing_fields.append("title")
@@ -33,6 +34,11 @@ def validate_post_data(data):
 
 @app.route('/api/posts', methods=['GET', 'POST'])
 def get_posts():
+    """GET - Shows the list of posts
+            optional: sort[title, content] - sort by title or content;
+                      direction[asc or desc] - direction of sort
+       POST - Posts a new post
+    """
     if request.method == 'POST':
         new_post = request.get_json()
 
@@ -66,6 +72,7 @@ def get_posts():
 
 @app.route('/api/posts/<int:id>', methods=['DELETE'])
 def delete_post(id):
+    """Deletes a post from the list with the given ID"""
     # Find the post with the given ID
     post = find_post_by_id(id)
 
@@ -82,6 +89,7 @@ def delete_post(id):
 
 @app.route('/api/posts/<int:id>', methods=['PUT'])
 def update_post(id):
+    """Updates a post from the list with a given ID"""
     # Find the post with the given ID
     post = find_post_by_id(id)
 
@@ -103,6 +111,9 @@ def update_post(id):
 
 @app.route('/api/posts/search', methods=['GET'])
 def search_posts():
+    """Shows a list of posts with queries given in URL
+        title - What to search in the title
+        content - What to search in the content"""
     query = request.args
     search_results = [post for post in POSTS if query.get('title') in post['title']
                       or query.get('content') in post['content']]
